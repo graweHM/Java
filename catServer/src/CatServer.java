@@ -7,32 +7,32 @@ import java.util.TreeMap;
 
 public class CatServer {
     //to format logMessage time
-    SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
+    private SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
     //i/o to client
-    PrintWriter cpw;
-    BufferedReader cbr;
+    private PrintWriter cpw;
+    private BufferedReader cbr;
     //i/o to server
-    PrintWriter spw;
-    BufferedReader sbr;
+    private PrintWriter spw;
+    private BufferedReader sbr;
     //sockets
-    ServerSocket ses;
-    Socket cs;
-    Socket cts;
+    private ServerSocket ps;
+    private Socket pcs;
+    private Socket pss;
     //port to listen on for browser request
-    int port = 8082;
+    private int port = 8082;
     //client info
-    TreeMap<String, String> clientInfo = new TreeMap<>();
+    private TreeMap<String, String> clientInfo = new TreeMap<>();
     //host input
-    String host;
-    String url;
+    private String host;
+    private String url;
     //http version
-    String httpVersion;
+    private String httpVersion;
     //uft-8 charset
-    String charset = StandardCharsets.UTF_8.name();
+    private String charset = StandardCharsets.UTF_8.name();
     //link to replace img link
-    String catPic = "http://test.annarboranimalhospital.com/wp-content/uploads/2011/06/Obese-cat.jpg";
+    private String catPic = "http://test.annarboranimalhospital.com/wp-content/uploads/2011/06/Obese-cat.jpg";
     //default request values
-    String accLang = " en-US";
+    private String accLang = " en-US";
 
     public CatServer(){
 
@@ -45,7 +45,7 @@ public class CatServer {
     public void startServer() throws IOException, InterruptedException{
         try {
             logMessage("Starting Server");
-            ses = new ServerSocket(port);
+            ps = new ServerSocket(port);
             logMessage("Server listening on port " + port);
 
             cycle();
@@ -58,11 +58,11 @@ public class CatServer {
     }
 
     private void cycle() throws IOException, InterruptedException{
-        cs = ses.accept();
+        pcs = ps.accept();
         logMessage("Client connected");
 
-        cbr = new BufferedReader(new InputStreamReader(cs.getInputStream()));
-        cpw = new PrintWriter(new OutputStreamWriter(cs.getOutputStream()), true);
+        cbr = new BufferedReader(new InputStreamReader(pcs.getInputStream()));
+        cpw = new PrintWriter(new OutputStreamWriter(pcs.getOutputStream()), true);
 
         if (!(getInputURL(cbr.readLine())))
             stopServer();
@@ -87,7 +87,6 @@ public class CatServer {
     }
 
     private boolean getInputURL(String x){
-        System.out.println(x);
         if(x == "" || x == null)
             return false;
         url = "";
@@ -121,9 +120,9 @@ public class CatServer {
     }
 
     private void sendGET() throws IOException{
-        cts = new Socket(host, 80);
-        spw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(cts.getOutputStream())), true);
-        sbr = new BufferedReader(new BufferedReader(new InputStreamReader(cts.getInputStream())));
+        pss = new Socket(host, 80);
+        spw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(pss.getOutputStream())), true);
+        sbr = new BufferedReader(new BufferedReader(new InputStreamReader(pss.getInputStream())));
 
         logMessage("");
         logMessage("Connection to " + host + " established");
@@ -185,15 +184,15 @@ public class CatServer {
 
     private void stopServer() throws IOException, InterruptedException{
         logMessage("STOPPING SERVER");
-        if(ses != null) {
+        if(ps != null) {
             cbr.close();
             cpw.close();
-            ses.close();
+            ps.close();
         }
-        if(cts != null) {
+        if(pss != null) {
             sbr.close();
             spw.close();
-            cts.close();
+            pss.close();
         }
         startServer();
     }
