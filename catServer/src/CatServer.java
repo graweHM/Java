@@ -112,7 +112,7 @@ public class CatServer {
                 System.out.println(z);
             }
         }
-        if(url == null)
+        if(url == "")
             url = "/";
         if(host == null)
             return false;
